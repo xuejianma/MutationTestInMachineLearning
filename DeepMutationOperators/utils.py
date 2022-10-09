@@ -120,9 +120,9 @@ class ModelUtils():
         for index, layer in enumerate(new_model.layers):
             original_layer = original_layers[index]
             original_weights = original_layer.get_weights()
-            layer.name = layer.name + suffix
+            layer._name = layer._name + suffix
             layer.set_weights(original_weights)
-        new_model.name = new_model.name + suffix
+        new_model._name = new_model._name + suffix
         return new_model
 
     def get_booleans_of_layers_should_be_mutated(self, num_of_layers, indices):

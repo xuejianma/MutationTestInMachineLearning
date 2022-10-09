@@ -1,6 +1,8 @@
 import tensorflow as tf
+import tensorflow.keras as tk
 import numpy as np
 import keras 
+print(tf.config.list_physical_devices())
 
 class FCNetwork():
 
@@ -11,7 +13,7 @@ class FCNetwork():
         self.resize_height = 28
 
     def load_data(self):
-        (train_datas, train_labels), (test_datas, test_labels) = keras.datasets.mnist.load_data()
+        (train_datas, train_labels), (test_datas, test_labels) = tk.datasets.mnist.load_data()
         train_labels = train_labels[:self.number_of_train_data]
         test_labels = test_labels[:self.number_of_test_data]
         train_datas = train_datas[:self.number_of_train_data].reshape(-1, self.resize_width * self.resize_height) / 255.0
@@ -150,7 +152,7 @@ class CNNNetwork():
         self.num_of_channels = 1
 
     def load_data(self):
-        (train_datas, train_labels), (test_datas, test_labels) = keras.datasets.mnist.load_data()
+        (train_datas, train_labels), (test_datas, test_labels) = tk.datasets.mnist.load_data()
         # Truncate 5000 training samples and 1000 test samples apart from original dataset 
         train_labels = train_labels[:self.number_of_train_data]
         test_labels = test_labels[:self.number_of_test_data]
@@ -242,6 +244,7 @@ class CNNNetwork():
         return model
 
     def train_model(self, model, train_datas, train_labels, name_of_file=None, epochs=20, batch_size=None, verbose=False, with_checkpoint=False):
+        print(tf.config.list_physical_devices('GPU'))
         if with_checkpoint:
             prefix = ''
             filepath = prefix + name_of_file + '-{epoch:02d}-{loss:.4f}.h5'
