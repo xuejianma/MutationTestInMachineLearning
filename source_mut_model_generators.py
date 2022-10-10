@@ -18,6 +18,7 @@ class SourceMutatedModelGenerators():
             self.network = network.FCNetwork()
         
         self.source_mut_opts = source_mut_operators.SourceMutationOperators()
+        self.valid_modes = ['DR', 'LE', 'DM', 'DF', 'NP', 'LR', 'LAs', 'AFRs']
     
 
     def integration_test(self, verbose=False):
@@ -37,14 +38,12 @@ class SourceMutatedModelGenerators():
             self.generate_model_by_source_mutation(train_dataset, test_dataset, model, mode, verbose=verbose)
 
 
-    def generate_model_by_source_mutation(self, train_dataset, test_dataset, model, mode, verbose=False):
+    def generate_model_by_source_mutation(self, train_dataset, test_dataset, model, mode, mutation_ratio, verbose=False, save_model=True):
         mutated_datas, mutated_labels = None, None
         mutated_model = None
-        valid_modes = ['DR', 'LE', 'DM', 'DF', 'NP', 'LR', 'LAs', 'AFRs']
-        assert mode in valid_modes, 'Input mode ' + mode + ' is not implemented'
+        assert mode in self.valid_modes, 'Input mode ' + mode + ' is not implemented'
         
         # Parameters can experiment with 
-        mutation_ratio = 0.9
         suffix = '_model'
         name_of_saved_file = mode + suffix
         with_checkpoint = False
@@ -76,17 +75,11 @@ class SourceMutatedModelGenerators():
 
         mutated_model = self.network.compile_model(mutated_model)
         trained_mutated_model = self.network.train_model(mutated_model, mutated_datas, mutated_labels, with_checkpoint=with_checkpoint)
-            
-        if verbose:
-            # Extract unmutated model and dataset for comparision
-            train_datas, train_labels = train_dataset
-            model = self.network.compile_model(model)
-            trained_model = self.network.train_model(model, train_datas, train_labels, with_checkpoint=with_checkpoint)
 
-            self.utils.print_messages_SMO(mode, train_datas=train_datas, train_labels=train_labels, mutated_datas=mutated_datas, mutated_labels=mutated_labels, model=trained_model, mutated_model=trained_mutated_model, mutation_ratio=mutation_ratio)
-        
-            test_datas, test_labels = test_dataset
-            self.network.evaluate_model(trained_model, test_datas, test_labels)
-            self.network.evaluate_model(trained_mutated_model, test_datas, test_labels, mode)
+        test_datas, test_labels = test_dataset
 
-        self.network.save_model(trained_mutated_model, name_of_saved_file, mode)
+        acc_trained_mutated_model = trained_mutated_model.evaluate(test_datas, test_labels)[1]  
+
+        if save_model:
+            self.network.save_model(trained_mutated_model, name_of_saved_file, mode)
+        return acc_trained_mutated_model

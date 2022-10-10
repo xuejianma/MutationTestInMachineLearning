@@ -22,6 +22,7 @@ class ModelMutatedModelGenerators():
         (_, _), (test_datas, test_results) = self.network.load_data()
         self.test_datas = test_datas
         self.test_results = test_results
+        self.valid_modes = ['GF', 'WS', 'NEB', 'NAI', 'NS', 'LD', 'LAm', 'AFRm']
          
     def integration_test(self, verbose=False):
         # Parameters 
@@ -40,10 +41,9 @@ class ModelMutatedModelGenerators():
             name_of_saved_file = mode + '_model'
             self.generate_model_by_model_mutation(model, mode, mutation_ratio, name_of_saved_file=name_of_saved_file, mutated_layer_indices=mutated_layer_indices, verbose=verbose) 
 
-    def generate_model_by_model_mutation(self, model, mode, mutation_ratio, name_of_saved_file='mutated_model', mutated_layer_indices=None, STD=0.1, verbose=False):
+    def generate_model_by_model_mutation(self, model, mode, mutation_ratio, name_of_saved_file='mutated_model', mutated_layer_indices=None, STD=0.1, verbose=False, save_model=True):
         mutated_model = None
-        valid_modes = ['GF', 'WS', 'NEB', 'NAI', 'NS', 'LD', 'LAm', 'AFRm']
-        assert mode in valid_modes, 'Input mode ' + mode + ' is not implemented'
+        assert mode in self.valid_modes, 'Input mode ' + mode + ' is not implemented'
         
         if mode == 'GF':
             mutated_model = self.model_mut_opts.GF_mut(model, mutation_ratio, prob_distribution='normal', STD=STD, mutated_layer_indices=mutated_layer_indices)
@@ -65,9 +65,12 @@ class ModelMutatedModelGenerators():
             pass
 
         mutated_model = self.network.compile_model(mutated_model)
+        acc_trained_mutated_model = mutated_model.evaluate(self.test_datas, self.test_results)[1]
 
         if verbose:
             self.model_utils.print_comparision_of_layer_weights(model, mutated_model)
-            self.utils.print_messages_MMM_generators(mode, network=self.network, test_datas=self.test_datas, test_results=self.test_results, model=model, mutated_model=mutated_model, STD=STD, mutation_ratio=mutation_ratio) 
+            self.utils.print_messages_MMM_generators(mode, network=self.network, test_datas=self.test_datas, test_labels=self.test_results, model=model, mutated_model=mutated_model, STD=STD, mutation_ratio=mutation_ratio) 
 
-        self.network.save_model(mutated_model, name_of_saved_file, mode) 
+        if save_model:
+            self.network.save_model(mutated_model, name_of_saved_file, mode) 
+        return acc_trained_mutated_model

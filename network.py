@@ -2,7 +2,6 @@ import tensorflow as tf
 import tensorflow.keras as tk
 import numpy as np
 import keras 
-print(tf.config.list_physical_devices())
 
 class FCNetwork():
 
