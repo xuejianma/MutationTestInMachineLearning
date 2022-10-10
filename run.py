@@ -50,8 +50,10 @@ class RunMutants():
             except Exception as e:
                 print('Error when loading records from checkpoint:', e, '. Starting from scratch.')
                 self.records = dict()
+                self.records[str(('raw', 'raw', 'raw'))] = [self.acc_trained_model]
         else:
             self.records = dict()
+            self.records[str(('raw', 'raw', 'raw'))] = [self.acc_trained_model]
     
     def run_source_mutants(self):
         print('------------- Start running source mutants -------------')
@@ -95,17 +97,26 @@ if __name__ == '__main__':
     mutation_ratios = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     repetition_num = 10
 
-    # FC
-    run_mutants = RunMutants(model_name='FC', repetition_num=10, mutation_ratios=mutation_ratios, from_checkpoint=True)
-    run_mutants.run_model_mutants()
-    run_mutants.run_source_mutants()
+    while True:
+        try:
+            # FC
+            run_mutants = RunMutants(model_name='FC', repetition_num=10, mutation_ratios=mutation_ratios, from_checkpoint=True)
+            run_mutants.run_model_mutants()
+            run_mutants.run_source_mutants()
 
-    # CNN1
-    run_mutants = RunMutants(model_name='CNN1', repetition_num=10, mutation_ratios=mutation_ratios, from_checkpoint=True)
-    run_mutants.run_model_mutants()
-    run_mutants.run_source_mutants()
+            # CNN1
+            run_mutants = RunMutants(model_name='CNN1', repetition_num=10, mutation_ratios=mutation_ratios, from_checkpoint=True)
+            run_mutants.run_model_mutants()
+            run_mutants.run_source_mutants()
 
-    # CNN2
-    run_mutants = RunMutants(model_name='CNN2', repetition_num=10, mutation_ratios=mutation_ratios, from_checkpoint=True)
-    run_mutants.run_model_mutants()
-    run_mutants.run_source_mutants()
+            # CNN2
+            run_mutants = RunMutants(model_name='CNN2', repetition_num=10, mutation_ratios=mutation_ratios, from_checkpoint=True)
+            run_mutants.run_model_mutants()
+            run_mutants.run_source_mutants()
+
+            break
+        except Exception as e:
+            print('Error:', e)
+            print('Restarting...')
+    
+    print('Run Mutants Finished!')
