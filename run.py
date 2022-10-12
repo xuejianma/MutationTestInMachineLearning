@@ -32,7 +32,7 @@ class RunMutants():
                 self.trained_model = self.network.load_model(self.model_name)
                 print('Loaded trained model from checkpoint')
             except Exception as e:
-                print('Failed to load model from checkpoint, training a new model')
+                print('Failed to load model from checkpoint, training a new model. Error:', e)
                 self.trained_model = self.network.train_model(self.compiled_model, self.train_datas, self.train_labels)
                 self.network.save_model(self.trained_model, self.model_name)
         else:
@@ -54,6 +54,25 @@ class RunMutants():
         else:
             self.records = dict()
             self.records[str(('raw', 'raw', 'raw'))] = [self.acc_trained_model]
+        self.run_vanilla_model()
+
+    def run_vanilla_model(self):
+        print('------------- Start running vanilla model -------------')
+        trained_model = self.network.train_model(self.compiled_model, self.train_datas, self.train_labels)
+        for i in range(1, self.repetition_num + 1):
+            key = str(('raw', 'raw', 'raw'))
+            if key not in self.records:
+                self.records[key] = []
+            else:
+                if len(self.records[key]) >= i:
+                    print('Already run this experiment:', key, i)
+                    continue
+            acc_vanilla_model = trained_model.evaluate(self.test_datas, self.test_labels)[1]
+            print(self.model_name, '- Vanilla model - Repetition:', i, '/', self.repetition_num, 'Accuracy', acc_vanilla_model)
+            self.records[key].append(acc_vanilla_model)
+            with open(self.records_filename, 'w') as f:
+                json.dump(self.records, f)
+        print('------------- Finished running vanilla model -------------')
     
     def run_source_mutants(self):
         print('------------- Start running source mutants -------------')
