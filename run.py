@@ -2,7 +2,6 @@ import source_mut_model_generators
 import model_mut_model_generators
 import network
 import json
-import pickle
 
 class RunMutants():
     def __init__(self, model_name='FC', repetition_num=10, mutation_ratios=[0.1], from_checkpoint=False):
@@ -54,11 +53,9 @@ class RunMutants():
         else:
             self.records = dict()
             self.records[str(('raw', 'raw', 'raw'))] = [self.acc_trained_model]
-        self.run_vanilla_model()
 
     def run_vanilla_model(self):
         print('------------- Start running vanilla model -------------')
-        trained_model = self.network.train_model(self.compiled_model, self.train_datas, self.train_labels)
         for i in range(1, self.repetition_num + 1):
             key = str(('raw', 'raw', 'raw'))
             if key not in self.records:
@@ -67,6 +64,10 @@ class RunMutants():
                 if len(self.records[key]) >= i:
                     print('Already run this experiment:', key, i)
                     continue
+            curr_network = network.FCNetwork() if self.model_name == 'FC' else network.CNNNetwork()
+            model = curr_network.create_normal_FC_model() if self.model_name == 'FC' else curr_network.create_CNN_model_1() if self.model_name == 'CNN1' else curr_network.create_CNN_model_2()
+            compiled_model = curr_network.compile_model(model)
+            trained_model = curr_network.train_model(compiled_model, self.train_datas, self.train_labels)
             acc_vanilla_model = trained_model.evaluate(self.test_datas, self.test_labels)[1]
             print(self.model_name, '- Vanilla model - Repetition:', i, '/', self.repetition_num, 'Accuracy', acc_vanilla_model)
             self.records[key].append(acc_vanilla_model)
@@ -120,16 +121,19 @@ if __name__ == '__main__':
         try:
             # FC
             run_mutants = RunMutants(model_name='FC', repetition_num=10, mutation_ratios=mutation_ratios, from_checkpoint=True)
+            run_mutants.run_vanilla_model()
             run_mutants.run_model_mutants()
             run_mutants.run_source_mutants()
 
             # CNN1
             run_mutants = RunMutants(model_name='CNN1', repetition_num=10, mutation_ratios=mutation_ratios, from_checkpoint=True)
+            run_mutants.run_vanilla_model()
             run_mutants.run_model_mutants()
             run_mutants.run_source_mutants()
 
             # CNN2
             run_mutants = RunMutants(model_name='CNN2', repetition_num=10, mutation_ratios=mutation_ratios, from_checkpoint=True)
+            run_mutants.run_vanilla_model()
             run_mutants.run_model_mutants()
             run_mutants.run_source_mutants()
 
