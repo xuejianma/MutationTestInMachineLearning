@@ -110,7 +110,7 @@ class RunMutants():
                             continue
                     if self.test_from == 'test':
                         if not self.test_uniform:
-                            random_indices = self.utils.get_random_indices_non_uniform(self.test_prime_datas, self.test_num)
+                            random_indices = self.utils.get_random_indices_non_uniform(self.test_prime_labels, self.test_num)
                         else:
                             random_indices = np.random.choice(len(self.test_prime_datas), self.test_num, replace=False)
                         test_datas = self.test_prime_datas[random_indices]
@@ -118,7 +118,7 @@ class RunMutants():
                         results = self.source_mut_model_generators.generate_model_by_source_mutation_metrics(train_dataset=self.train_dataset, test_dataset=(self.test_prime_datas, self.test_prime_labels), model=self.model, mode=mode, mutation_ratio=mutation_ratio, verbose=False, save_model=False)
                     else:
                         if not self.test_uniform:
-                            random_indices = self.utils.get_random_indices_non_uniform(self.train_prime_datas, self.test_num)
+                            random_indices = self.utils.get_random_indices_non_uniform(self.train_prime_labels, self.test_num)
                         else:
                             random_indices = np.random.choice(len(self.train_prime_datas), self.test_num, replace=False)
                         train_datas = self.train_prime_datas[random_indices]
@@ -145,7 +145,7 @@ class RunMutants():
                             continue
                     if self.test_from == 'test':
                         if not self.test_uniform:
-                            random_indices = self.utils.get_random_indices(self.test_prime_datas, self.test_num)
+                            random_indices = self.utils.get_random_indices_non_uniform(self.test_prime_labels, self.test_num)
                         else:
                             random_indices = np.random.choice(len(self.test_prime_datas), self.test_num, replace=False)
                         test_datas = self.test_prime_datas[random_indices]
@@ -153,7 +153,7 @@ class RunMutants():
                         results = self.model_mut_model_generators.generate_model_by_model_mutation_metrics(model=self.trained_model, mode=mode, mutation_ratio=mutation_ratio, test_datas=test_datas, test_labels=test_labels)
                     else:
                         if not self.test_uniform:
-                            random_indices = self.utils.get_random_indices(self.train_prime_datas, self.test_num)
+                            random_indices = self.utils.get_random_indices_non_uniform(self.train_prime_labels, self.test_num)
                         else:
                             random_indices = np.random.choice(len(self.train_prime_datas), self.test_num, replace=False)
                         train_datas = self.train_prime_datas[random_indices]
@@ -180,22 +180,27 @@ if __name__ == '__main__':
             for test_uniform in [True, False]:
                 for test_from, test_num in zip(['test', 'train'], [1000, 5000]):
                     # FC
+                    print('FC', test_from, test_num, test_uniform)
                     run_mutants = RunMutants(model_name='FC', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
                     run_mutants.run_vanilla_model()
                     run_mutants.run_model_mutants()
                     run_mutants.run_source_mutants()
 
                     # CNN1
+                    print('CNN1', test_from, test_num, test_uniform)
                     run_mutants = RunMutants(model_name='CNN1', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
                     run_mutants.run_vanilla_model()
                     run_mutants.run_model_mutants()
                     run_mutants.run_source_mutants()
 
                     # CNN2
+                    print('CNN2', test_from, test_num, test_uniform)
                     run_mutants = RunMutants(model_name='CNN2', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
                     run_mutants.run_vanilla_model()
                     run_mutants.run_model_mutants()
                     run_mutants.run_source_mutants()
+                    
+                    break
         except Exception as e:
             print('Error:', e)
             print('Restarting...')
