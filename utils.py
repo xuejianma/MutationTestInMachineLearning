@@ -163,6 +163,15 @@ class ModelUtils():
             name = names_for_layers[index]
             print(' {index} | {name} | {result}'.format(index=str(index).rjust(11), name=name.rjust(14), result=(not result)))
         print('')
+    
+    def get_random_indices_non_uniform(prime_labels, test_num):
+        biased_class = np.random.randint(len(prime_labels[0]))
+        biased_class_indices = [i for i in range(len(prime_labels)) if prime_labels[i].argmax() == biased_class]
+        other_indices = [i for i in range(len(prime_labels)) if prime_labels[i].argmax() != biased_class]
+        biased_class_random_indices = np.random.choice(biased_class_indices, int(self.test_num * 0.8), replace=False)
+        other_random_indices = np.random.choice(other_indices, int(self.test_num * 0.2), replace=False)
+        random_indices = biased_class_random_indices + other_random_indices
+        return random_indices
 
 
 class ExaminationalUtils():

@@ -6,8 +6,8 @@ import keras
 class FCNetwork():
 
     def __init__(self):
-        self.number_of_train_data = 5000
-        self.number_of_test_data = 1000
+        self.number_of_train_data = None#5000
+        self.number_of_test_data = None#1000
         self.resize_width = 28
         self.resize_height = 28
 
@@ -142,8 +142,8 @@ class FCNetwork():
 class CNNNetwork():
 
     def __init__(self):
-        self.number_of_train_data = 5000
-        self.number_of_test_data = 1000
+        self.number_of_train_data = None#5000
+        self.number_of_test_data = None#1000
         self.width_without_padding = 28
         self.height_without_pading = 28
         self.width_with_padding = 32

@@ -74,3 +74,38 @@ class ModelMutatedModelGenerators():
         if save_model:
             self.network.save_model(mutated_model, name_of_saved_file, mode) 
         return acc_trained_mutated_model
+
+    def generate_model_by_model_mutation_metrics(self, model, mode, mutation_ratio, test_datas, test_labels, name_of_saved_file='mutated_model', mutated_layer_indices=None, STD=0.1):
+        mutated_model = None
+        assert mode in self.valid_modes, 'Input mode ' + mode + ' is not implemented'
+        
+        if mode == 'GF':
+            mutated_model = self.model_mut_opts.GF_mut(model, mutation_ratio, prob_distribution='normal', STD=STD, mutated_layer_indices=mutated_layer_indices)
+        elif mode == 'WS':
+            mutated_model = self.model_mut_opts.WS_mut(model, mutation_ratio, mutated_layer_indices=mutated_layer_indices) 
+        elif mode == 'NEB':
+            mutated_model = self.model_mut_opts.NEB_mut(model, mutation_ratio, mutated_layer_indices=mutated_layer_indices)
+        elif mode == 'NAI':
+            mutated_model = self.model_mut_opts.NAI_mut(model, mutation_ratio, mutated_layer_indices=mutated_layer_indices)
+        elif mode == 'NS':
+            mutated_model = self.model_mut_opts.NS_mut(model, mutation_ratio, mutated_layer_indices=mutated_layer_indices)
+        elif mode == 'LD':
+            mutated_model = self.model_mut_opts.LD_mut(model, mutated_layer_indices=mutated_layer_indices)
+        elif mode == 'LAm':
+            mutated_model = self.model_mut_opts.LAm_mut(model, mutated_layer_indices=mutated_layer_indices)
+        elif mode == 'AFRm':
+            mutated_model = self.model_mut_opts.AFRm_mut(model, mutated_layer_indices=mutated_layer_indices)
+        else:
+            pass
+
+        mutated_model = self.network.compile_model(mutated_model)
+        test_results = mutated_model.predict(test_datas)
+        correct_indices = [i for i in range(len(test_results)) if test_results[i].argmax() == test_labels[i].argmax()]
+        correct_labels = test_labels[correct_indices].argmax(axis=1)
+        incorrect_indices = [i for i in range(len(test_results)) if test_results[i].argmax() != test_labels[i].argmax()]
+        incorrect_labels = test_labels[incorrect_indices].argmax(axis=1)
+        killed_classes = list(set(incorrect_labels))
+        killed_classes = [int(item) for item in killed_classes]
+        accuracy = len(correct_indices) / len(test_results)
+        accuracy_per_class = [len([j for j in correct_labels if j == i])/len([j for j in test_labels.argmax(axis=1) if j == i]) for i in range(len(test_labels[0]))]
+        return {'accuracy': accuracy, 'accuracy_per_class': accuracy_per_class, 'killed_classes': killed_classes}
