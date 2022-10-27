@@ -169,9 +169,9 @@ class RunMutants():
 
 if __name__ == '__main__':
     # mutation_ratios = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    # repetition_num = 10
-    mutation_ratios = [0.03]
-    repetition_num = 5
+    # repetition_num = 10dawsdas
+    mutation_ratios = [0.02]
+    repetition_num = 10
     # test_from = 'test'
     # test_num = 1000
 
