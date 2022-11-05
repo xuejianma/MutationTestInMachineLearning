@@ -43,7 +43,7 @@ class RunMutants():
         self.acc_trained_model = self.trained_model.evaluate(self.test_datas, self.test_labels)[1]
         self.repetition_num = repetition_num
         self.mutation_ratios = mutation_ratios
-        self.records_filename = self.model_name + "_records.json"
+        self.records_filename = self.model_name + "_records_colab.json"
         if from_checkpoint:
             try:
                 with open(self.records_filename, 'r') as f:
@@ -115,7 +115,7 @@ class RunMutants():
                             random_indices = np.random.choice(len(self.test_prime_datas), self.test_num, replace=False)
                         test_datas = self.test_prime_datas[random_indices]
                         test_labels = self.test_prime_labels[random_indices]
-                        results = self.source_mut_model_generators.generate_model_by_source_mutation_metrics(train_dataset=self.train_dataset, test_dataset=(self.test_prime_datas, self.test_prime_labels), model=self.model, mode=mode, mutation_ratio=mutation_ratio, verbose=False, save_model=False)
+                        results = self.source_mut_model_generators.generate_model_by_source_mutation_metrics(train_dataset=self.train_dataset, test_dataset=(test_datas, test_labels), model=self.model, mode=mode, mutation_ratio=mutation_ratio, verbose=False, save_model=False)
                     else:
                         if not self.test_uniform:
                             random_indices = self.utils.get_random_indices_non_uniform(self.train_prime_labels, self.test_num)
@@ -123,7 +123,7 @@ class RunMutants():
                             random_indices = np.random.choice(len(self.train_prime_datas), self.test_num, replace=False)
                         train_datas = self.train_prime_datas[random_indices]
                         train_labels = self.train_prime_labels[random_indices]
-                        results = self.source_mut_model_generators.generate_model_by_source_mutation_metrics(train_dataset=self.train_dataset, test_dataset=(self.train_prime_datas, self.train_prime_labels), model=self.model, mode=mode, mutation_ratio=mutation_ratio, verbose=False, save_model=False)
+                        results = self.source_mut_model_generators.generate_model_by_source_mutation_metrics(train_dataset=self.train_dataset, test_dataset=(train_datas, train_labels), model=self.model, mode=mode, mutation_ratio=mutation_ratio, verbose=False, save_model=False)
                     # print(results)
                     print(self.model_name, '- Source mutants - Mutation Ratio:', mutation_ratio, 'Mode: ', mode, '(', k + 1, '/', len(self.model_mut_model_generators.valid_modes), ')', 'Repetition:', i, '/', self.repetition_num, 'Accuracy', results['accuracy'], 'test_from', self.test_from, 'test_num:', self.test_num, 'test_uniform:', self.test_uniform)
                     self.records[key].append(results)
@@ -182,22 +182,22 @@ if __name__ == '__main__':
                     # FC
                     print('FC', test_from, test_num, test_uniform)
                     run_mutants = RunMutants(model_name='FC', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
-                    run_mutants.run_vanilla_model()
-                    run_mutants.run_model_mutants()
+                    # run_mutants.run_vanilla_model()
+                    # run_mutants.run_model_mutants()
                     run_mutants.run_source_mutants()
 
                     # CNN1
                     print('CNN1', test_from, test_num, test_uniform)
                     run_mutants = RunMutants(model_name='CNN1', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
-                    run_mutants.run_vanilla_model()
-                    run_mutants.run_model_mutants()
+                    # run_mutants.run_vanilla_model()
+                    # run_mutants.run_model_mutants()
                     run_mutants.run_source_mutants()
 
-                    # CNN2
+                    # CNN2bv..
                     print('CNN2', test_from, test_num, test_uniform)
                     run_mutants = RunMutants(model_name='CNN2', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
-                    run_mutants.run_vanilla_model()
-                    run_mutants.run_model_mutants()
+                    # run_mutants.run_vanilla_model()
+                    # run_mutants.run_model_mutants()
                     run_mutants.run_source_mutants()
             break
 
