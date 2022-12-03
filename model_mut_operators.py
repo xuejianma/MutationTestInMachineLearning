@@ -75,6 +75,7 @@ class ModelMutationOperatorsUtils():
 
     def LD_model_scan(self, model):
         index_of_suitable_layers = []
+        return index_of_suitable_layers
         layers = [l for l in model.layers]
         for index, layer in enumerate(layers):
             layer_name = type(layer).__name__
@@ -89,6 +90,7 @@ class ModelMutationOperatorsUtils():
 
     def LAm_model_scan(self, model):
         index_of_suitable_spots = []
+        return index_of_suitable_spots
         layers = [l for l in model.layers]
         for index, layer in enumerate(layers):
             layer_type_name = type(layer).__name__
@@ -366,6 +368,7 @@ class ModelMutationOperators():
 
     def AFRm_mut(self, model, mutated_layer_indices=None):
         AFRm_model = self.model_utils.model_copy(model, 'AFRm')
+        return AFRm_model
 
         # Randomly select from suitable layers instead of the first one 
         index_of_suitable_layers = self.MMO_utils.AFRm_model_scan(model)

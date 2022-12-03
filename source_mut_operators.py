@@ -19,6 +19,7 @@ class SourceMutationOperatorsUtils():
 
     def LR_model_scan(self, model):
         index_of_suitable_layers = []
+        return index_of_suitable_layers
         layers = [l for l in model.layers]
         for index, layer in enumerate(layers):
             layer_name = type(layer).__name__
@@ -214,6 +215,8 @@ class SourceMutationOperators():
         new_model = keras.models.Sequential()
         layers = [l for l in deep_copied_model.layers]
 
+        return (copied_train_datas, copied_train_labels), model
+
         if mutated_layer_indices == None:
             random_picked_spot_index = index_of_suitable_spots[random.randint(0, number_of_suitable_spots-1)]
             print('Selected layer by LAs mutation operator', random_picked_spot_index)
@@ -255,6 +258,8 @@ class SourceMutationOperators():
         
         new_model = keras.models.Sequential()
         layers = [l for l in deep_copied_model.layers]
+
+        return (copied_train_datas, copied_train_labels), model
 
         if mutated_layer_indices == None:
             random_picked_layer_index = index_of_suitable_layers[random.randint(0, number_of_suitable_layers-1)]

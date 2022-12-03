@@ -107,5 +107,6 @@ class ModelMutatedModelGenerators():
         killed_classes = list(set(incorrect_labels))
         killed_classes = [int(item) for item in killed_classes]
         accuracy = len(correct_indices) / len(test_results)
+        # print(list(sorted(test_labels.argmax(axis=1))))
         accuracy_per_class = [len([j for j in correct_labels if j == i])/len([j for j in test_labels.argmax(axis=1) if j == i]) for i in range(len(test_labels[0]))]
         return {'accuracy': accuracy, 'accuracy_per_class': accuracy_per_class, 'killed_classes': killed_classes}

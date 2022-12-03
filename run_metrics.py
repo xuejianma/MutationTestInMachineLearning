@@ -9,8 +9,8 @@ class RunMutants():
     def __init__(self, model_name='FC', repetition_num=10, mutation_ratios=[0.1], test_from="test", test_num=1000, test_uniform=True, from_checkpoint=False):
         self.utils = utils.GeneralUtils()
         self.model_name = model_name
-        if self.model_name not in ['FC', 'CNN1', 'CNN2']:
-            raise ValueError('model_name should be either FC, CNN1 or CNN2')
+        if self.model_name not in ['FC', 'CNN1', 'CNN2', 'VGG', 'ResNet']:
+            raise ValueError('model_name should be either FC, CNN1, CNN2, VGG, or ResNet')
         if self.model_name == 'CNN1':
             self.source_mut_model_generators = source_mut_model_generators.SourceMutatedModelGenerators(model_architecture='CNN')
             self.model_mut_model_generators = model_mut_model_generators.ModelMutatedModelGenerators(model_architecture='CNN')
@@ -21,6 +21,16 @@ class RunMutants():
             self.model_mut_model_generators = model_mut_model_generators.ModelMutatedModelGenerators(model_architecture='CNN')
             self.network = network.CNNNetwork()
             self.model = self.network.create_CNN_model_2()
+        elif self.model_name == "VGG":
+            self.source_mut_model_generators = source_mut_model_generators.SourceMutatedModelGenerators(model_architecture='CNN')
+            self.model_mut_model_generators = model_mut_model_generators.ModelMutatedModelGenerators(model_architecture='CNN')
+            self.network = network.CNNNetwork()
+            self.model = self.network.create_VGG16_model()
+        elif self.model_name == "ResNet":
+            self.source_mut_model_generators = source_mut_model_generators.SourceMutatedModelGenerators(model_architecture='CNN')
+            self.model_mut_model_generators = model_mut_model_generators.ModelMutatedModelGenerators(model_architecture='CNN')
+            self.network = network.CNNNetwork()
+            self.model = self.network.create_resnet50_model()
         else:
             self.source_mut_model_generators = source_mut_model_generators.SourceMutatedModelGenerators(model_architecture='FC')
             self.model_mut_model_generators = model_mut_model_generators.ModelMutatedModelGenerators(model_architecture='FC')
@@ -170,41 +180,56 @@ class RunMutants():
 if __name__ == '__main__':
     # mutation_ratios = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     # repetition_num = 10dawsdas
-    mutation_ratios = [0.03]
+    mutation_ratios = [0.01]
     repetition_num = 10
     # test_from = 'test'
     # test_num = 1000
 
     while True:
-        try:
-            for test_uniform in [True, False]:
-                for test_from, test_num in zip(['test', 'train'], [1000, 5000]):
+        # try:
+            for test_from, test_num in zip(['train', 'test'], [5000, 1000]):
+                # for test_from, test_num in zip(['test', 'train'], [1000, 5000]):
+                for test_uniform in [True, False]:
                     # FC
-                    print('FC', test_from, test_num, test_uniform)
-                    run_mutants = RunMutants(model_name='FC', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
-                    # run_mutants.run_vanilla_model()
-                    # run_mutants.run_model_mutants()
-                    run_mutants.run_source_mutants()
+                    # print('FC', test_from, test_num, test_uniform)
+                    # run_mutants = RunMutants(model_name='FC', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
+                    # # run_mutants.run_vanilla_model()
+                    # # run_mutants.run_model_mutants()
+                    # run_mutants.run_source_mutants()
 
                     # CNN1
-                    print('CNN1', test_from, test_num, test_uniform)
-                    run_mutants = RunMutants(model_name='CNN1', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
-                    # run_mutants.run_vanilla_model()
-                    # run_mutants.run_model_mutants()
-                    run_mutants.run_source_mutants()
+                    # print('CNN1', test_from, test_num, test_uniform)
+                    # run_mutants = RunMutants(model_name='CNN1', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
+                    # # run_mutants.run_vanilla_model()
+                    # # run_mutants.run_model_mutants()
+                    # run_mutants.run_source_mutants()
 
-                    # CNN2bv..
-                    print('CNN2', test_from, test_num, test_uniform)
-                    run_mutants = RunMutants(model_name='CNN2', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
+                    # CNN2
+                    # print('CNN2', test_from, test_num, test_uniform)
+                    # run_mutants = RunMutants(model_name='CNN2', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
+                    # # run_mutants.run_vanilla_model()
+                    # # run_mutants.run_model_mutants()
+                    # run_mutants.run_source_mutants()
+
+                    # VGG
+                    # print('VGG', test_from, test_num, test_uniform)
+                    # run_mutants = RunMutants(model_name='VGG', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
                     # run_mutants.run_vanilla_model()
-                    # run_mutants.run_model_mutants()
+                    # # run_mutants.run_model_mutants()
+                    # run_mutants.run_source_mutants()
+
+                    # ResNet
+                    print('ResNet', test_from, test_num, test_uniform)
+                    run_mutants = RunMutants(model_name='ResNet', repetition_num=repetition_num, mutation_ratios=mutation_ratios, test_from=test_from, test_num=test_num, test_uniform=test_uniform, from_checkpoint=True)
+                    run_mutants.run_vanilla_model()
+                    run_mutants.run_model_mutants()
                     run_mutants.run_source_mutants()
             break
 
-        except Exception as e:
-            print('Error:', e)
-            print('Restarting...')
-            # break
+        # except Exception as e:
+        #     print('Error:', e)
+        #     print('Restarting...')
+        #     # break
     
     # print('Run Mutants Finished!')
     # run_mutants = RunMutants(model_name='FC', repetition_num=10, mutation_ratios=mutation_ratios, from_checkpoint=True)

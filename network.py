@@ -1,5 +1,6 @@
 import tensorflow as tf
 import tensorflow.keras as tk
+from tensorflow.keras.applications import VGG16, ResNet50
 import numpy as np
 import keras 
 
@@ -234,6 +235,14 @@ class CNNNetwork():
             keras.layers.Dense(units=200, activation='relu'),
             keras.layers.Dense(units=10, activation='softmax')
         ])
+        return model
+    
+    def create_VGG16_model(self):
+        model = VGG16(include_top=True, weights=None, input_tensor=None, input_shape=(self.width_with_padding, self.height_with_padding, self.num_of_channels), pooling=None, classes=10)
+        return model
+    
+    def create_resnet50_model(self):
+        model = ResNet50(include_top=True, weights=None, input_tensor=None, input_shape=(self.width_with_padding, self.height_with_padding, self.num_of_channels), pooling=None, classes=10)
         return model
 
     def compile_model(self, model):
